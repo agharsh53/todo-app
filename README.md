@@ -1,132 +1,189 @@
-# 📝 ToDo Web App --- Full Stack Assignment (Humanli.AI)
+# 📝 ToDo Web App — Full Stack Assignment (Humanli.AI)
 
-A full-stack To-Do Board Management application where users can:
+A beautifully designed **Board + Task Management Web App** built as per the Humanli.AI Technical Assignment.
 
--   Register & Login (Firebase Authentication)
--   Create Boards
--   Add, update & delete Todos inside boards
--   Perform all CRUD operations
--   Fully secure API using Firebase Admin verification
+Users can:
 
-------------------------------------------------------------------------
+- Register & Login (Firebase Authentication)
+- Create Boards
+- Add, edit, complete, delete tasks inside boards
+- Priority-based colored tasks (Low / Medium / High)
+- Due Dates
+- Progress Tracking
+- Secure API using Firebase Admin Authentication
+- Fully Modern UI (TaskFlow/BoardBuddy Inspired)
 
-## 🚀 Tech Stack
+---
+
+# 📸 UI Screenshots
+
+The ToDo Web App includes a modern, beautiful UI inspired by TaskFlow/BoardBuddy.  
+Below are the key screens of the application.
+
+---
+
+## 🔐 Authentication
+
+### **Login Page**
+![Login Page](./screenshots/login.png)
+
+### **Register Page**
+![Register Page](./screenshots/register.png)
+
+---
+
+## 🏠 Dashboard
+
+### **Dashboard Overview**
+Displays all user boards with clean modern cards.
+![Dashboard](./screenshots/dashboard.png)
+
+### **Board Card (Preview)**
+![Board Card](./screenshots/board-card.png)
+
+---
+
+## 📁 Board View
+
+### **Board Header (Purple Section)**
+Shows board title, today’s description, and task progress.
+![Board Header](./screenshots/board-header.png)
+
+---
+
+## 📝 Tasks
+
+### **Task List View**
+Beautiful list UI with priority colors, due dates, and actions.
+![Task List](./screenshots/task-list.png)
+
+### **Todo Card (Task Item)**
+![Todo Card](./screenshots/todo-card.png)
+
+---
+
+# 🚀 Tech Stack
 
 ### **Frontend**
-
--   React.js
--   Tailwind CSS
--   Firebase Authentication
--   Axios
+- React.js  
+- Tailwind CSS  
+- Firebase Authentication  
+- Axios
 
 ### **Backend**
+- Node.js + Express.js  
+- MongoDB (local via MongoDB Compass)  
+- Firebase Admin SDK  
+- Mongoose  
 
--   Node.js + Express.js
--   MongoDB (local via MongoDB Compass)
--   Firebase Admin SDK
--   Mongoose
+---
 
-------------------------------------------------------------------------
+# 📁 Project Folder Structure
 
-## 📌 Features
+```
+todo-app/
+  backend/
+    src/
+      config/db.js
+      middleware/auth.js
+      models/Board.js
+      models/Todo.js
+      routes/boardRoutes.js
+      routes/todoRoutes.js
+      controllers/
+      app.js
+      server.js
+    firebase-admin.json
+    .env
+    package.json
 
--   Email/Password Login
--   Protected Routes
--   Board Management (CRUD)
--   Todo Management inside Boards (CRUD)
--   Firebase Token Security
+  frontend/
+    src/
+      pages/
+      components/
+      context/AuthContext.jsx
+      firebase.js
+      api.js
+      App.js
+      index.js
+      index.css
+    tailwind.config.js
+    package.json
+```
 
-------------------------------------------------------------------------
+---
 
-## 📂 Folder Structure
+# 🗄️ Backend Setup
 
-    todo-app/
-      backend/
-        src/
-          config/db.js
-          middleware/auth.js
-          models/Board.js
-          models/Todo.js
-          routes/boardRoutes.js
-          routes/todoRoutes.js
-          app.js
-          server.js
-        firebase-admin.json
-        .env
-        package.json
-
-      frontend/
-        src/
-          pages/
-          components/
-          context/AuthContext.jsx
-          firebase.js
-          api.js
-          App.js
-          index.js
-          index.css
-        tailwind.config.js
-        package.json
-
-------------------------------------------------------------------------
-
-# ⚙️ Backend Setup
-
-    cd backend
-    npm install
+```sh
+cd backend
+npm install
+```
 
 Create `.env`:
 
-    MONGO_URI=mongodb://127.0.0.1:27017/todoapp
-    PORT=5000
+```
+MONGO_URI=mongodb://127.0.0.1:27017/todoapp
+PORT=5000
+```
 
 Start backend:
 
-    npm run dev
+```sh
+npm run dev
+```
 
-------------------------------------------------------------------------
+---
 
 # 🎨 Frontend Setup
 
-    cd frontend
-    npm install
-    npm start
+```sh
+cd frontend
+npm install
+npm start
+```
 
-------------------------------------------------------------------------
+---
 
 # 🎯 How to Run Full Project
 
-Start backend:
+Backend:
 
-    cd backend
-    npm run dev
+```sh
+cd backend
+npm run dev
+```
 
-Start frontend:
+Frontend:
 
-    cd frontend
-    npm start
+```sh
+cd frontend
+npm start
+```
 
-------------------------------------------------------------------------
+---
 
 # 📡 API Endpoints
 
-## Boards
+### 📌 Boards
+- GET `/api/boards`
+- POST `/api/boards`
+- PUT `/api/boards/:id`
+- DELETE `/api/boards/:id`
 
--   GET `/api/boards`
--   POST `/api/boards`
--   PUT `/api/boards/:id`
--   DELETE `/api/boards/:id`
+### 📌 Todos
+- GET `/api/todos/:boardId`
+- POST `/api/todos`
+- PUT `/api/todos/:id`
+- PATCH `/api/todos/:id/toggle`
+- DELETE `/api/todos/:id`
 
-## Todos
+---
 
--   GET `/api/todos/:boardId`
--   POST `/api/todos`
--   PUT `/api/todos/:id`
--   DELETE `/api/todos/:id`
+# 🤵 Author
 
-------------------------------------------------------------------------
+**Harsh Kumar Agrawal**  
+Full Stack Developer  
+GitHub: https://github.com/agharsh53
 
-# 🙌 Thank You
-
-Full-stack assignment project for Humanli.AI\
-Author: **Harsh Kumar Agrawal**
+---
