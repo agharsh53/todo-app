@@ -11,6 +11,9 @@ import { auth } from '../firebase';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+// Get API URL from environment
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const AuthContext = createContext({});
 
 export const useAuth = () => useContext(AuthContext);
@@ -19,35 +22,54 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Get auth header for API requests
+  const getAuthHeader = () => {
+    const token = localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  // Sync user with backend
+  const syncUserWithBackend = async (firebaseUser) => {
+    try {
+      const token = await firebaseUser.getIdToken();
+      localStorage.setItem('token', token);
+      
+      console.log('Syncing user with backend:', {
+        email: firebaseUser.email,
+        uid: firebaseUser.uid
+      });
+      
+      const response = await axios.post(`${API_URL}/auth/register`, {
+        email: firebaseUser.email,
+        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User'
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      return {
+        ...firebaseUser,
+        ...response.data.user
+      };
+    } catch (error) {
+      console.error('Sync error:', error);
+      // Return basic user info if backend sync fails
+      return {
+        ...firebaseUser,
+        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User'
+      };
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          const token = await firebaseUser.getIdToken();
-          localStorage.setItem('token', token);
-          
-          // Always allow login regardless of email verification status
-          console.log('User logged in:', {
-            email: firebaseUser.email,
-            emailVerified: firebaseUser.emailVerified,
-            uid: firebaseUser.uid
-          });
-          
-          // Sync with backend
-          const response = await axios.post('http://localhost:5000/api/auth/register', {
-            email: firebaseUser.email,
-            name: firebaseUser.displayName || firebaseUser.email.split('@')[0]
-          }, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-
-          setUser({
-            ...firebaseUser,
-            ...response.data.user
-          });
+          const syncedUser = await syncUserWithBackend(firebaseUser);
+          setUser(syncedUser);
         } catch (error) {
-          console.error('Auth error:', error);
-          // Don't show error toast here - let login function handle it
+          console.error('Auth state change error:', error);
+          // Still set user with basic info
+          setUser(firebaseUser);
         }
       } else {
         setUser(null);
@@ -64,23 +86,14 @@ export const AuthProvider = ({ children }) => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;
       
-      console.log('Login successful:', {
-        email: firebaseUser.email,
-        emailVerified: firebaseUser.emailVerified,
-        uid: firebaseUser.uid
-      });
-      
-      // DON'T check email verification - allow login regardless
-      // if (!firebaseUser.emailVerified) {
-      //   toast.warning('Email not verified. Please check your inbox.');
-      // }
+      console.log('Login successful:', firebaseUser.email);
       
       toast.success('Login successful!');
       return true;
     } catch (error) {
       console.error('Login error:', error);
       
-      // Show user-friendly error messages
+      // User-friendly error messages
       let errorMessage = 'Login failed';
       switch (error.code) {
         case 'auth/user-not-found':
@@ -119,7 +132,7 @@ export const AuthProvider = ({ children }) => {
         });
       }
       
-      // Send email verification (but don't require it for login)
+      // Send email verification (optional)
       try {
         await sendEmailVerification(firebaseUser);
         toast.success('Registration successful! Please check your email for verification link.');
@@ -128,14 +141,13 @@ export const AuthProvider = ({ children }) => {
         toast.success('Registration successful!');
       }
       
-      // Immediately get new token with updated profile
+      // Force token refresh to include updated profile
       await firebaseUser.getIdToken(true);
       
       return true;
     } catch (error) {
       console.error('Registration error:', error);
       
-      // Show user-friendly error messages
       let errorMessage = 'Registration failed';
       switch (error.code) {
         case 'auth/email-already-in-use':
@@ -162,16 +174,13 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await signOut(auth);
+      setUser(null);
+      localStorage.removeItem('token');
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('Logout failed');
     }
-  };
-
-  const getAuthHeader = () => {
-    const token = localStorage.getItem('token');
-    return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
   const value = {

@@ -1,60 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const admin = require('firebase-admin');
 const User = require('../models/User');
-
-// Initialize Firebase Admin
-try {
-  const serviceAccount = require('../firebase-admin.json');
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
-  console.log('✅ Firebase Admin initialized from JSON file');
-} catch (error) {
-  console.log('⚠️  Could not load Firebase JSON file:', error.message);
-  // For development, initialize with minimal config
-  admin.initializeApp({
-    projectId: 'dev-project'
-  });
-}
-
-// Firebase authentication middleware
-const verifyFirebaseToken = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split('Bearer ')[1];
-    
-    if (!token) {
-      // For development/testing
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Development mode: Using mock user');
-        req.user = { 
-          uid: 'dev-user-' + Date.now(), 
-          email: 'dev@example.com' 
-        };
-        return next();
-      }
-      return res.status(401).json({ error: 'No token provided' });
-    }
-
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    req.user = decodedToken;
-    next();
-  } catch (error) {
-    console.error('Token verification error:', error);
-    
-    // For development, allow to continue
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Development mode: Using mock user after error');
-      req.user = { 
-        uid: 'dev-user-' + Date.now(), 
-        email: 'dev@example.com' 
-      };
-      return next();
-    }
-    
-    res.status(401).json({ error: 'Invalid token' });
-  }
-};
+const { verifyFirebaseToken } = require('../config/firebase.config');
 
 // Register/Login user with Firebase
 router.post('/register', verifyFirebaseToken, async (req, res) => {

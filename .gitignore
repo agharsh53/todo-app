@@ -1,32 +1,98 @@
-# Dependencies
+cat > .gitignore << 'EOF'
+# ========================
+# DEPENDENCIES
+# ========================
 node_modules/
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
 
-# Environment variables
+# ========================
+# ENVIRONMENT & SECRETS
+# ========================
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*
+!.env.example
 
-# Build output
+# ========================
+# FIREBASE SECURITY FILES
+# ========================
+**/firebase-admin.json
+**/firebase-adminsdk*.json
+**/*-firebase-adminsdk-*.json
+**/serviceAccount*.json
+**/service-account*.json
+
+# ========================
+# BUILD OUTPUTS
+# ========================
 dist/
 build/
 out/
+.next/
+.cache/
 
-# IDE
+# Frontend specific
+frontend/build/
+frontend/.next/
+frontend/out/
+
+# Backend specific
+backend/dist/
+backend/build/
+
+# ========================
+# IDE & EDITOR
+# ========================
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS
+*~
 .DS_Store
 Thumbs.db
 
-# Logs
+# ========================
+# LOGS
+# ========================
 logs/
-*.logbackend/firebase-admin.json
-.env
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# ========================
+# KEYS & CERTIFICATES
+# ========================
 *.key
 *.pem
+*.crt
+*.cer
+*.pfx
+*.p12
+
+# ========================
+# DATABASE
+# ========================
+*.db
+*.sqlite
+*.sqlite3
+
+# ========================
+# TESTING
+# ========================
+coverage/
+.nyc_output/
+
+# ========================
+# MISC
+# ========================
+*.pid
+*.seed
+*.pid.lock
+EOF

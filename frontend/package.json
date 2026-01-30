@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "todo-app-frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -18,7 +18,7 @@
     "@types/react-dom": "^19.2.3",
     "axios": "^1.13.4",
     "date-fns": "^4.1.0",
-    "firebase": "^12.8.0",
+    "firebase": "^10.7.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-hot-toast": "^2.6.0",
@@ -32,9 +32,16 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "setup": "cp .env.example .env && echo 'Please edit .env with your Firebase credentials'",
+    "dev": "react-scripts start"
   },
-
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
   "browserslist": {
     "production": [
       ">0.2%",

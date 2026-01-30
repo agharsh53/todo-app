@@ -2,41 +2,12 @@ const express = require('express');
 const router = express.Router();
 const Todo = require('../models/Todo');
 const User = require('../models/User');
-const admin = require('firebase-admin');
-
-const verifyFirebaseToken = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split('Bearer ')[1];
-    
-    if (!token) {
-      // For development
-      if (process.env.NODE_ENV === 'development') {
-        req.firebaseUID = 'dev-user-' + Date.now();
-        return next();
-      }
-      return res.status(401).json({ error: 'No token provided' });
-    }
-
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    req.firebaseUID = decodedToken.uid;
-    next();
-  } catch (error) {
-    console.error('Token verification error:', error);
-    
-    // For development
-    if (process.env.NODE_ENV === 'development') {
-      req.firebaseUID = 'dev-user-' + Date.now();
-      return next();
-    }
-    
-    res.status(401).json({ error: 'Invalid token' });
-  }
-};
+const { verifyFirebaseToken } = require('../config/firebase.config');
 
 // Get todos for a board
 router.get('/board/:boardId', verifyFirebaseToken, async (req, res) => {
   try {
-    const user = await User.findOne({ firebaseUID: req.firebaseUID });
+    const user = await User.findOne({ firebaseUID: req.user.uid });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -56,7 +27,7 @@ router.get('/board/:boardId', verifyFirebaseToken, async (req, res) => {
 // Create todo
 router.post('/', verifyFirebaseToken, async (req, res) => {
   try {
-    const user = await User.findOne({ firebaseUID: req.firebaseUID });
+    const user = await User.findOne({ firebaseUID: req.user.uid });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -92,7 +63,7 @@ router.post('/', verifyFirebaseToken, async (req, res) => {
 // Update todo
 router.put('/:id', verifyFirebaseToken, async (req, res) => {
   try {
-    const user = await User.findOne({ firebaseUID: req.firebaseUID });
+    const user = await User.findOne({ firebaseUID: req.user.uid });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -133,7 +104,7 @@ router.put('/:id', verifyFirebaseToken, async (req, res) => {
 // Delete todo
 router.delete('/:id', verifyFirebaseToken, async (req, res) => {
   try {
-    const user = await User.findOne({ firebaseUID: req.firebaseUID });
+    const user = await User.findOne({ firebaseUID: req.user.uid });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -157,7 +128,7 @@ router.delete('/:id', verifyFirebaseToken, async (req, res) => {
 // Update todo status
 router.patch('/:id/status', verifyFirebaseToken, async (req, res) => {
   try {
-    const user = await User.findOne({ firebaseUID: req.firebaseUID });
+    const user = await User.findOne({ firebaseUID: req.user.uid });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+
 import {
   Container,
   Grid,
@@ -50,6 +51,7 @@ const colorOptions = [
   { value: '#3b82f6', label: 'Blue' },
 ];
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 const Dashboard = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [newBoard, setNewBoard] = useState({ 
@@ -66,7 +68,7 @@ const Dashboard = () => {
     queryKey: ['boards'],
     queryFn: async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/boards', {
+        const response = await axios.get(`${API_URL}/boards`, {
           headers: getAuthHeader()
         });
         return response.data;
@@ -80,7 +82,7 @@ const Dashboard = () => {
 
   const createBoardMutation = useMutation({
     mutationFn: (boardData) => 
-      axios.post('http://localhost:5000/api/boards', boardData, {
+      axios.post(`${API_URL}/boards`, boardData, {
         headers: getAuthHeader()
       }),
     onSuccess: () => {
@@ -97,7 +99,7 @@ const Dashboard = () => {
 
   const updateBoardMutation = useMutation({
     mutationFn: ({ id, ...data }) => 
-      axios.put(`http://localhost:5000/api/boards/${id}`, data, {
+      axios.put(`${API_URL}/boards/${id}`, data, {
         headers: getAuthHeader()
       }),
     onSuccess: () => {
@@ -114,7 +116,7 @@ const Dashboard = () => {
 
   const deleteBoardMutation = useMutation({
     mutationFn: (id) => 
-      axios.delete(`http://localhost:5000/api/boards/${id}`, {
+      axios.delete(`${API_URL}/boards/${id}`, {
         headers: getAuthHeader()
       }),
     onSuccess: () => {
