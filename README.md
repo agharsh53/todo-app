@@ -43,13 +43,6 @@ Displays all user boards with clean modern cards.
 
 ---
 
-## 📁 Board View
-
-### **Board Header (Purple Section)**
-Shows board title, today’s description, and task progress.
-![Board Header](./screenshots/board-header.png)
-
----
 
 ## 📝 Tasks
 
